@@ -31,7 +31,7 @@ function App() {
     return (
         <div>
             <main>
-                <div>
+                <div className="search-box">
                     <input
                         type="text"
                         placeholder="Search..."

@@ -71,10 +71,25 @@ function App() {
                             <div className="date">{dateBuilder(new Date())}</div>
                         </div>
                         <div className="weather-box">
-                            <div className="temp">
+                            <div className="box">
+                                <div className="box-label">
+                                    Current Temp
+                                </div>
                                 {Math.round(weather.main.temp)}°c
                             </div>
-                            <div className="weather">{weather.weather[0].main}</div>
+                            <div className="box">
+                                <div className="box-label">
+                                    Min / Max Temp
+                                </div>
+                                {Math.round(weather.main.temp_min)}°c / {Math.round(weather.main.temp_max)}°c
+                            </div>
+                            <div className="weather-description">{weather.weather[0].main} - {weather.weather[0].description}</div>
+                            <div className="box">
+                                <div className="box-label">
+                                    Current Humidity
+                                </div>
+                                {Math.round(weather.main.humidity)}%
+                            </div>
                         </div>
                     </div>
                 ) : ('')}

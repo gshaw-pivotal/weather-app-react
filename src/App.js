@@ -5,12 +5,29 @@ const api = {
     key: ""
 };
 
+// 300000ms is 5 minutes
+const cacheLife = 300000;
+
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const weatherCache = new Map();
 
 const dateBuilder = (date) => {
     return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
 };
+
+function getFromCache(location) {
+    if (weatherCache.has(location) && weatherCache.get(location).date >= Date.now() - cacheLife) {
+        return weatherCache.get(location);
+    } else {
+        return null;
+    }
+}
+
+function insertIntoCache(location, weather) {
+    weatherCache.set(location, {weather: weather, date: Date.now()});
+}
 
 function App() {
 
@@ -19,12 +36,19 @@ function App() {
 
     const search = event => {
         if (event.key === 'Enter') {
-            fetch(`${api.baseUrl}weather?q=${query}&units=metric&APPID=${api.key}`)
-                .then(reponse => reponse.json())
-                .then(result => {
-                    setWeather(result);
-                    setQuery('');
-                });
+            const cachedRecord = getFromCache(query.toLowerCase());
+            if (cachedRecord === null) {
+                fetch(`${api.baseUrl}weather?q=${query}&units=metric&APPID=${api.key}`)
+                    .then(reponse => reponse.json())
+                    .then(result => {
+                        insertIntoCache(query, result)
+                        setWeather(result);
+                        setQuery('');
+                    });
+            } else {
+                setWeather(cachedRecord.weather);
+                setQuery('');
+            }
         }
     };
 
